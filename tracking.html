@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tracking</title>
+
+    <!-- This code is needed for responsive design to work.
+      (Responsive design = make the website look good on
+      smaller screen sizes like a phone or a tablet). -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Load a font called Roboto from Google Fonts. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Here are the CSS files for this page. -->
+    <link rel="stylesheet" href="styles/shared/general.css">
+    <link rel="stylesheet" href="styles/shared/amazon-header.css">
+    <link rel="stylesheet" href="styles/pages/tracking.css">
+  </head>
+  <body>
+    <div class="amazon-header">
+      <div class="amazon-header-left-section">
+        <a href="amazon.html" class="header-link">
+          <img class="amazon-logo"
+            src="images/amazon-logo-white.png">
+          <img class="amazon-mobile-logo"
+            src="images/amazon-mobile-logo-white.png">
+        </a>
+      </div>
+
+      <div class="amazon-header-middle-section">
+        <input class="search-bar" type="text" placeholder="Search">
+
+        <button class="search-button">
+          <img class="search-icon" src="images/icons/search-icon.png">
+        </button>
+      </div>
+
+      <div class="amazon-header-right-section">
+        <a class="orders-link header-link" href="orders.html">
+          <span class="returns-text">Returns</span>
+          <span class="orders-text">& Orders</span>
+        </a>
+
+        <a class="cart-link header-link" href="checkout.html">
+          <img class="cart-icon" src="images/icons/cart-icon.png">
+          <div class="cart-quantity">3</div>
+          <div class="cart-text">Cart</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="order-tracking">
+        <a class="back-to-orders-link link-primary" href="orders.html">
+          View all orders
+        </a>
+
+        <div class="delivery-date js-delivery-date">
+          <!-- Delivery date will be dynamically updated -->
+        </div>
+
+        <div class="product-info js-product-name">
+          <!-- Product name will be dynamically updated -->
+        </div>
+
+        <div class="product-info js-product-quantity">
+          <!-- Product quantity will be dynamically updated -->
+        </div>  
+
+        <img class="product-image js-product-image" src="" alt="Product Image">
+
+        <div class="progress-labels-container">
+          <div class="progress-label js-progress-preparing">
+            Preparing
+          </div>
+          <div class="progress-label js-progress-shipped">
+            Shipped
+          </div>
+          <div class="progress-label js-progress-delivered">
+            Delivered
+          </div>
+        </div>
+
+        <div class="progress-bar-container">
+          <div class="progress-bar js-progress-bar"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Extract orderId and productId from the URL
+      const url = new URL(window.location.href);
+      const orderId = url.searchParams.get('orderId');
+      const productId = url.searchParams.get('productId');
+
+      // Simulate fetching order and product details from a backend
+      async function fetchOrderDetails(orderId, productId) {
+        // Simulated API response
+        const orderDetails = {
+          deliveryDate: 'Monday, June 13',
+          product: {
+            name: 'Black and Gray Athletic Cotton Socks - 6 Pairs',
+            quantity: 1,
+            image: 'images/products/athletic-cotton-socks-6-pairs.jpg',
+          },
+          status: 'Shipped', // Possible values: 'Preparing', 'Shipped', 'Delivered'
+        };
+
+        return orderDetails;
+      }
+
+      // Update the tracking page dynamically
+      async function updateTrackingPage() {
+        if (!orderId || !productId) {
+          // Display an error message to the user
+          document.querySelector('.main').innerHTML = `
+            <div class="error-message">
+              Missing order details. Please go back to the <a href="orders.html">Orders page</a>.
+            </div>
+          `;
+          console.error('Missing orderId or productId in the URL');
+          return;
+        }
+
+        const orderDetails = await fetchOrderDetails(orderId, productId);
+
+        // Update delivery date
+        document.querySelector('.js-delivery-date').textContent = `Arriving on ${orderDetails.deliveryDate}`;
+
+        // Update product details
+        document.querySelector('.js-product-name').textContent = orderDetails.product.name;
+        document.querySelector('.js-product-quantity').textContent = `Quantity: ${orderDetails.product.quantity}`;
+        document.querySelector('.js-product-image').src = orderDetails.product.image;
+
+        // Update progress bar and labels based on status
+        const progressBar = document.querySelector('.js-progress-bar');
+        const preparingLabel = document.querySelector('.js-progress-preparing');
+        const shippedLabel = document.querySelector('.js-progress-shipped');
+        const deliveredLabel = document.querySelector('.js-progress-delivered');
+
+        if (orderDetails.status === 'Preparing') {
+          progressBar.style.width = '33%';
+          preparingLabel.classList.add('current-status');
+        } else if (orderDetails.status === 'Shipped') {
+          progressBar.style.width = '66%';
+          shippedLabel.classList.add('current-status');
+        } else if (orderDetails.status === 'Delivered') {
+          progressBar.style.width = '100%';
+          deliveredLabel.classList.add('current-status');
+        }
+      }
+
+      // Initialize the tracking page
+      updateTrackingPage();
+    </script>
+  </body>
+</html>
