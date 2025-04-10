@@ -66,24 +66,36 @@ function renderProductsGrid() {
     `;
   });
 
-
+  // Insert the generated HTML for the products into the element with the class 'js-products-grid'
   document.querySelector('.js-products-grid').innerHTML = productsHTML;
 
+  // Function to update the cart quantity displayed in the UI
   function updateCartQuantity() {
     let cartQuantity = 0;
+
+    // Iterate through each item in the cart and sum up their quantities
     cart.forEach((cartItem) => {
       cartQuantity += cartItem.quantity;
     });
 
+    // Update the cart quantity element in the UI with the total quantity
     document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
   }
 
+  // Add click event listeners to all 'Add to Cart' buttons
   document.querySelectorAll('.js-add-to-cart').forEach((button) => {
     button.addEventListener('click', () => {
+      // Get the product ID from the button's data attribute
       const productId = button.dataset.productId;
+
+      // Add the product to the cart using the addToCart function
       addToCart(productId);
+
+      // Update the cart quantity displayed in the UI
       updateCartQuantity();
     });
   });
+
+  
 
 }
